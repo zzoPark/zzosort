@@ -12,7 +12,7 @@ const configs = targets.map(target => ({
   output: {
     library: "ZzoSort",
     libraryTarget: "umd",
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "lib"),
     filename: "zzosort." + target.name + ".js",
     globalObject: "this"
   },
