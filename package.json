@@ -12,7 +12,11 @@
     "url": "git+https://github.com/zzoPark/zzosort.git"
   },
   "keywords": [
-    "'javascript"
+    "javascript",
+    "sort",
+    "heapsort",
+    "insertionsort",
+    "introsort"
   ],
   "author": "zzoPark",
   "license": "MIT",
