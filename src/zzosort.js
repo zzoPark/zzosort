@@ -53,7 +53,6 @@ const zzosort = (function() {
 
   function heapify(items, lo, hi, cmpf) {
     let start = iParent(hi);
-
     while (start >= lo) {
       siftDown(items, start, hi, cmpf);
       start = start - 1;
@@ -67,7 +66,6 @@ const zzosort = (function() {
     while (iLeftChild(root) <= end) {
       child = iLeftChild(root);
       toSwap = root;
-
       if (cmpf(items[toSwap], items[child]) < 0)
         toSwap = child;
       if ((child + 1) <= end && cmpf(items[toSwap], items[child+1]) < 0)
