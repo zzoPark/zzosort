@@ -95,12 +95,12 @@ const zzosort = (function() {
   }
 
   function partition(items, lo, hi, cmpf) {
-    const pivot = pivot(items, lo, hi, cmpf);
+    const pv = pivot(items, lo, hi, cmpf);
     let i = lo,
         j = hi;
     while (i < j) {
-      while (cmpf(items[i], pivot) < 0) i++;
-      while (cmpf(items[j], pivot) > 0) j--;
+      while (cmpf(items[i], pv) < 0) i++;
+      while (cmpf(items[j], pv) > 0) j--;
       if (i >= j) break;
       swap(items, i, j);
     }
