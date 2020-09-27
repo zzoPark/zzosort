@@ -1,61 +1,47 @@
 const path = require("path");
 
-const targets = [
-  { name: "web", supports: { chrome: 58, ie: 9 } },
-  { name: "node", supports: { node: "current" } }
-];
-
-const configs = targets.map(target => ({
+module.exports = {
   mode: "production",
-  target: target.name,
+  devtool: "source-map",
   entry: "./src/zzosort.js",
   output: {
-    library: "ZzoSort",
-    libraryTarget: "umd",
-    path: path.resolve(__dirname, "lib"),
-    filename: "zzosort." + target.name + ".js",
-    globalObject: "this"
+    library: "zzosort",
+    filename: "zzosort.js",
+    path: path.resolve(__dirname, "dist")
   },
+  target: "web",
   module: {
     rules: [
       {
         test: /\.m?js$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: "babel-loader",
-            options: {
-              sourceType: "module",
-              plugins: [
-                [
-                  "@babel/plugin-transform-runtime",
-                  {
-                    corejs: 3,
-                    useESModules: true
-                  }
-                ]
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            sourceType: "module",
+            plugins: [
+              [
+                "@babel/plugin-transform-runtime",
+                {
+                  corejs: 3,
+                  useESModules: true
+                }
               ],
-              presets: [
-                [
-                  "@babel/preset-env",
-                  {
-                    useBuiltIns: "entry",
-                    targets: target.supports,
-                    corejs: 3
-                  }
-                ]
+              ["@babel/plugin-proposal-class-properties"]
+            ],
+            presets: [
+              [
+                "@babel/preset-env",
+                {
+                  useBuiltIns: "entry",
+                  targets: { chrome: 58, ie: 9 },
+                  corejs: 3
+                }
               ]
-            }
+            ]
           }
-        ]
-      },
-      {
-        test: /test\.js$/,
-        exclude: /node_modules/,
-        use: "mocha-loader"
+        }
       }
     ]
   }
-}));
-
-module.exports = configs;
+};

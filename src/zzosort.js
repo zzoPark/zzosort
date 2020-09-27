@@ -4,28 +4,34 @@ const zzosort = (function() {
   const iLeftChild = i => 2 * i + 1;
   const iRightChild = i => 2 * i + 2;
 
-  function sort(items, cmpf) {
-    console.time('sort');
-    const len = items.length;
-    let maxdepth = Math.log(len) * 2;
-    introSort(items, 0, len - 1, maxdepth, cmpf);
-    console.timeEnd('sort');
+  function swap(items, a, b) {
+    let temp = items[a];
+    items[a] = items[b];
+    items[b] = temp;
   }
 
-  function introSort(items, lo, hi, maxdepth, cmpf) {
-    if (hi - lo < 16) {
-      insertionSort(items, lo, hi, cmpf);
-      return;
-    }
+  function pivot(items, lo, hi, cmpf) {
+    const mid = Math.floor((lo + hi) / 2);
+    if (cmpf(items[mid], items[lo]) < 0) 
+      swap(items, lo, mid);
+    if (cmpf(items[hi], items[lo]) < 0)
+      swap(items, lo, hi);
+    if (cmpf(items[mid], items[hi]) < 0)
+      swap(items, mid, hi);
+    return items[hi];
+  }
 
-    if (maxdepth === 0) {
-      heapSort(items, lo, hi, cmpf);
-      return;
+  function partition(items, lo, hi, cmpf) {
+    const pv = pivot(items, lo, hi, cmpf);
+    let i = lo - 1,
+        j = hi + 1;
+    while (i < j) {
+      do i++; while (cmpf(items[i], pv) < 0);
+      do j--; while (cmpf(items[j], pv) > 0);
+      if (i >= j) break;
+      swap(items, i, j);
     }
-
-    const p = partition(items, lo, hi, cmpf);
-    introSort(items, lo, p, maxdepth, cmpf);
-    introSort(items, p + 1, hi, maxdepth, cmpf);
+    return j;
   }
 
   function insertionSort(items, left, right, cmpf) {
@@ -38,24 +44,6 @@ const zzosort = (function() {
         j = j - 1;
       }
       items[j + 1] = key;
-    }
-  }
-
-  function heapSort(items, lo, hi, cmpf) {
-    heapify(items, lo, hi, cmpf);
-    let end = hi;
-    while (end > lo) {
-      swap(items, end, lo);
-      end = end - 1;
-      siftDown(items, lo, end, cmpf);
-    }
-  }
-
-  function heapify(items, lo, hi, cmpf) {
-    let start = iParent(hi);
-    while (start >= lo) {
-      siftDown(items, start, hi, cmpf);
-      start = start - 1;
     }
   }
 
@@ -77,34 +65,44 @@ const zzosort = (function() {
     }
   }
 
-  function swap(items, a, b) {
-    let temp = items[a];
-    items[a] = items[b];
-    items[b] = temp;
-  }
-
-  function pivot(items, lo, hi, cmpf) {
-    const mid = Math.floor((lo + hi) / 2);
-    if (cmpf(items[mid], items[lo]) < 0) 
-      swap(items, lo, mid);
-    if (cmpf(items[hi], items[lo]) < 0)
-      swap(items, lo, hi);
-    if (cmpf(items[mid], items[hi]) < 0)
-      swap(items, mid, hi);
-    return items[hi];
-  }
-
-  function partition(items, lo, hi, cmpf) {
-    const pv = pivot(items, lo, hi, cmpf);
-    let i = lo,
-        j = hi;
-    while (i < j) {
-      while (cmpf(items[i], pv) < 0) i++;
-      while (cmpf(items[j], pv) > 0) j--;
-      if (i >= j) break;
-      swap(items, i, j);
+  function heapify(items, lo, hi, cmpf) {
+    let start = iParent(hi);
+    while (start >= lo) {
+      siftDown(items, start, hi, cmpf);
+      start = start - 1;
     }
-    return j;
+  }
+
+  function heapSort(items, lo, hi, cmpf) {
+    heapify(items, lo, hi, cmpf);
+    let end = hi;
+    while (end > lo) {
+      swap(items, end, lo);
+      end = end - 1;
+      siftDown(items, lo, end, cmpf);
+    }
+  }
+
+  function introSort(items, lo, hi, maxdepth, cmpf) {
+    if (hi - lo < 16) {
+      insertionSort(items, lo, hi, cmpf);
+      return;
+    }
+
+    if (maxdepth === 0) {
+      heapSort(items, lo, hi, cmpf);
+      return;
+    }
+
+    const p = partition(items, lo, hi, cmpf);
+    introSort(items, lo, p, maxdepth - 1, cmpf);
+    introSort(items, p + 1, hi, maxdepth - 1, cmpf);
+  }
+
+  function sort(items, cmpf) {
+    const len = items.length;
+    let maxdepth = Math.floor(Math.log(len)) * 2;
+    introSort(items, 0, len - 1, maxdepth, cmpf);
   }
 
   return { sort, introSort, heapSort, insertionSort };

@@ -5,7 +5,8 @@
   "main": "src/zzosort.js",
   "scripts": {
     "test": "mocha",
-    "build": "webpack"
+    "build": "webpack",
+    "start": "start dist/example.html"
   },
   "repository": {
     "type": "git",
