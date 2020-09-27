@@ -22,7 +22,7 @@ npm test
 
 ## Example
 ```bash
-# Open example.html
+# Open example page
 npm start
 ```
 
