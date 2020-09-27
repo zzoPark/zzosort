@@ -21,7 +21,7 @@ npm test
 ```
 
 ## Example
-``` bash
+```bash
 # Open example.html
 npm start
 ```
