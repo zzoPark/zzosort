@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>zzosort example</title>
+  </head>
+  <body>
+    <header>
+      <h1>ZZOSORT Example</h1>
+    </header>
+    <main role="main">
+      <div>
+        <button id="sortById" type="button">Sort by id</button>
+        <button id="sortByName" type="button">Sort by name</button>
+      </div>
+      <div style="display: flex; width: 500px;">
+        <table id="before" style="flex: auto;">
+          <caption>Loading...</caption>
+          <tr>
+            <th>ID</th>
+            <th>NAME</th>
+          </tr>
+        </table>
+        <table id="after" style="flex: auto;">
+          <caption>Click Sort Button</caption>
+          <tr>
+            <th>ID</th>
+            <th>NAME</th>
+          </tr>
+        </table>
+      </div>
+    </main>
+    <footer>
+      <small>&copy; Copyright 2020, zzoPark</small>
+    </footer>
+
+    <script src="zzosort.js"></script>
+    <script>
+        var numItems = 100000;
+        // display nunber with commas for thousands
+        document.querySelector('#before caption').textContent = numItems.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' Items';
+
+        function randomString() {
+          return Math.random().toString(36).substr(2, 5).toUpperCase();
+        }
+
+        function randomInt(min, max) {
+          min = Math.ceil(min);
+          max = Math.floor(max);
+          return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function generateData() {
+          var data = []
+          var i, item;
+          for (i = 0; i < numItems; i++) {
+            item = {
+              id: randomInt(0, numItems),
+              name: randomString()
+            };
+            data.push(item);
+          }
+          return data;
+        }
+
+        function insertRows(table, data) {
+          var i, row, cell,
+              len = data.length;
+          for (i = 0; i < len; i++) {
+            // insert a row at the end of the table
+            row = table.insertRow(-1);
+            cell = row.insertCell(0);
+            cell.textContent = data[i].id;
+            cell = row.insertCell(1);
+            cell.textContent = data[i].name;
+          }
+        }
+
+        function deleteRows(table) {
+          var rownum = table.rows.length;
+          while (rownum > 1) {
+            table.deleteRow(-1);
+            rownum--;
+          } 
+        }
+        
+        function sortById(data) {
+          var after = document.querySelector('#after'),
+              caption = after.caption;
+          caption.textContent = 'Sorting...';
+          console.time('sorted by id');
+          var start = Date.now();
+          zzosort.sort(data, function(a, b) { return a.id - b.id; });
+          var spend = Date.now() - start;
+          caption.textContent = 'Sorted in ' + spend + ' msec';
+          console.timeEnd('sorted by id');
+          console.time('rendered');
+          deleteRows(after);
+          insertRows(after, data);
+          console.timeEnd('rendered');
+        }
+
+        function sortByName(data) {
+          var after = document.querySelector('#after'),
+              caption = after.caption;
+          caption.textContent = 'Sorting...';
+          console.time('sorted by name');
+          var start = Date.now();
+          zzosort.sort(data, function(a, b) { 
+            if (a.name > b.name) return 1;
+            if (a.name < b.name) return -1;
+            return 0;
+          });
+          var spend = Date.now() - start;
+          caption.textContent = 'Sorted in ' + spend + ' msec';
+          console.timeEnd('sorted by name');
+          console.time('rendered');
+          deleteRows(after);
+          insertRows(after, data);
+          console.timeEnd('rendered');
+        }
+
+        console.time('generated data');
+        var data = generateData();
+        var before = document.querySelector('#before');
+        insertRows(before, data);
+        console.timeEnd('generated data');
+ 
+        document.querySelector('#sortById').addEventListener('click', sortById.bind(null, data));
+        document.querySelector('#sortByName').addEventListener('click', sortByName.bind(null, data));
+  </script>
+  </body>
+</html>
